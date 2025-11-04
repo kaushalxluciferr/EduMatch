@@ -1,6 +1,6 @@
 import express from "express"
 import upload from "../config/multer.js"
-import { changepass, getAllteacher, getmydetail, getteacherinfo, login, signup, updateindo } from "../controller/teachercontroller.js"
+import { changepass, getAllteacher, getmydetail, getoneTeacherInfo, getteacherinfo, login, signup, updateindo } from "../controller/teachercontroller.js"
 import studentAuth from "../middleware/studentauth.js"
 import teacherAuth from "../middleware/teacherauth.js"
 const teacherRouter = express.Router()
@@ -13,5 +13,6 @@ teacherRouter.post('/updateinfo', upload.single('image'), teacherAuth, updateind
 teacherRouter.post('/getallteacher',studentAuth,getAllteacher)
 teacherRouter.post('/changepass',teacherAuth,changepass)
 teacherRouter.post('/getmydetail',teacherAuth,getmydetail)
+teacherRouter.post('getoneTeacherInfo',studentAuth,getoneTeacherInfo)
 
 export default teacherRouter

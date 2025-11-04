@@ -25,8 +25,8 @@ const signup = async (req, res) => {
             }
         }
         else if (req.body['subjects[]']) {
-            subjects = Array.isArray(req.body['subjects[]']) 
-                ? req.body['subjects[]'] 
+            subjects = Array.isArray(req.body['subjects[]'])
+                ? req.body['subjects[]']
                 : [req.body['subjects[]']];
         }
 
@@ -59,22 +59,22 @@ const signup = async (req, res) => {
         const hashpass = await bcrypt.hash(password, 10)
 
         const students = await Student.create({
-            name, 
-            email, 
-            password: hashpass, 
-            image: imageupload.secure_url, 
-            town, 
-            classLevel, 
-            number, 
-            city, 
-            gender, 
+            name,
+            email,
+            password: hashpass,
+            image: imageupload.secure_url,
+            town,
+            classLevel,
+            number,
+            city,
+            gender,
             subjects,
             mode: mode || 'Offline',
-            landmark: req.body.landmark || '', 
-            country, 
-            Area: req.body.area || '' 
+            landmark: req.body.landmark || '',
+            country,
+            Area: req.body.area || ''
         })
-        
+
         const token = jwt.sign({ _id: students._id }, process.env.JWT_SECRET);
         return res.json({
             success: true,
@@ -131,7 +131,7 @@ const login = async (req, res) => {
 
 const getstudnets = async (req, res) => {
     try {
-        
+
         const students = await Student.find({})
         if (students.length == 0) {
             return res.json({
@@ -150,13 +150,13 @@ const getstudnets = async (req, res) => {
 
 const getallstudnets = async (req, res) => {
     try {
-        const {country}=req.body
-        if(!country){
+        const { country } = req.body
+        if (!country) {
             return res.json({
-                success:false,message:"country is Required"
+                success: false, message: "country is Required"
             })
         }
-        const students = await Student.find({country})
+        const students = await Student.find({ country })
         if (students.length == 0) {
             return res.json({
                 success: false,
@@ -175,7 +175,7 @@ const getallstudnets = async (req, res) => {
 const getonestudnet = async (req, res) => {
     try {
         const { id } = req.body
-        const student = await Student.findById(id )
+        const student = await Student.findById(id)
         if (!student) {
             return res.json({ success: false, message: "studnet not found" })
         }
@@ -189,9 +189,9 @@ const getonestudnet = async (req, res) => {
 
 const updateinfo = async (req, res) => {
     try {
-        const { token, name,  gender, classLevel, subjects, mode, number, town, city, landmark, country, area  } = req.body
+        const { token, name, gender, classLevel, subjects, mode, number, town, city, landmark, country, area } = req.body
         const image = req.file
-        if (!token || !name || !gender ||  !subjects || !mode ||  !landmark || !classLevel || !country || !area || !number || !town || !city) {
+        if (!token || !name || !gender || !subjects || !mode || !landmark || !classLevel || !country || !area || !number || !town || !city) {
             return res.json({
                 success: false,
                 message: "Something is missing"
@@ -199,11 +199,11 @@ const updateinfo = async (req, res) => {
         }
         const student = jwt.verify(token, process.env.JWT_SECRET)
 
-        await Student.findByIdAndUpdate(student._id, { name,town, classLevel, number, city, gender, subjects, mode, landmark, country, area})
+        await Student.findByIdAndUpdate(student._id, { name, town, classLevel, number, city, gender, subjects, mode, landmark, country, area })
 
         if (image) {
             const imagefile = await cloudinary.uploader.upload(image.path)
-            await Student.findByIdAndUpdate(student._id, { image:imagefile.secure_url })
+            await Student.findByIdAndUpdate(student._id, { image: imagefile.secure_url })
         }
         return res.json({
             success: true,
@@ -216,47 +216,49 @@ const updateinfo = async (req, res) => {
     }
 }
 
-const changepass=async(req,res)=>{
-    try{
-        const {password,newpass,id}=req.body
-        if(!password ||!newpass ||!id){
-            return res.json({success:false,message:"somefield is missing"})
+const changepass = async (req, res) => {
+    try {
+        const { password, newpass, id } = req.body
+        if (!password || !newpass || !id) {
+            return res.json({ success: false, message: "somefield is missing" })
         }
 
 
-        const student=await Student.findById(id)
+        const student = await Student.findById(id)
 
-        if(!student){
-            return res.json({success:false,message:"studnet not found"})
+        if (!student) {
+            return res.json({ success: false, message: "studnet not found" })
         }
 
-        const match=await bcrypt.compare(password,student.password)
-        if(!match){
-            return res.json({success:false,message:"Passowrd is wrong"})
+        const match = await bcrypt.compare(password, student.password)
+        if (!match) {
+            return res.json({ success: false, message: "Passowrd is wrong" })
         }
-    const hash=await bcrypt.hash(newpass,10);
-        await Student.findByIdAndUpdate(id,{password:hash})
+        const hash = await bcrypt.hash(newpass, 10);
+        await Student.findByIdAndUpdate(id, { password: hash })
 
-        return res.json({success:true,message:"Update Successfull"})
+        return res.json({ success: true, message: "Update Successfull" })
 
-    }catch(error){
-        return res.json({success:false,message:error.message})
+    } catch (error) {
+        return res.json({ success: false, message: error.message })
     }
 }
 
 
 
-const getmydetail=async(req,res)=>{
-    try{
-        const userid=req.userid
-        const student=await Student.findById(userid)
-        if(!student){
-            return res.json({success:false,message:"no student found"})
+const getmydetail = async (req, res) => {
+    try {
+        const userid = req.userid
+        const student = await Student.findById(userid)
+        if (!student) {
+            return res.json({ success: false, message: "no student found" })
         }
 
-        return res.json({success:true,message:"Studnet found",student})
-    }catch(error){
-        return res.json({success:false,message:error.message})
+        return res.json({ success: true, message: "Studnet found", student })
+    } catch (error) {
+        return res.json({ success: false, message: error.message })
     }
 }
-export { signup, login, getallstudnets, updateinfo, getonestudnet ,getstudnets,changepass,getmydetail}
+
+
+export { signup, login, getallstudnets, updateinfo, getonestudnet, getstudnets, changepass, getmydetail }

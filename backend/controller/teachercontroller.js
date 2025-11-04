@@ -6,17 +6,17 @@ import jwt from 'jsonwebtoken'
 
 const signup = async (req, res) => {
     try {
-        const { 
-            name, email, password, gender, subjects, yearsofExperience, 
-            experience, description, teachupto, qualification, mode, 
-            feesPerHour, number, country, city, town, area 
+        const {
+            name, email, password, gender, subjects, yearsofExperience,
+            experience, description, teachupto, qualification, mode,
+            feesPerHour, number, country, city, town, area
         } = req.body
 
         const image = req.file
 
-        if (!image || !name || !email || !gender || !password || 
-            !yearsofExperience || !description || !teachupto || 
-            !qualification || !feesPerHour || !number || !country || 
+        if (!image || !name || !email || !gender || !password ||
+            !yearsofExperience || !description || !teachupto ||
+            !qualification || !feesPerHour || !number || !country ||
             !city || !town) {
             return res.status(400).json({
                 success: false,
@@ -48,40 +48,40 @@ const signup = async (req, res) => {
         const hashpass = await bcrypt.hash(password, 10)
 
         const teachers = await Teacher.create({
-            name, 
-            email, 
-            password: hashpass, 
-            image: imageupoad.secure_url, 
+            name,
+            email,
+            password: hashpass,
+            image: imageupoad.secure_url,
             gender,
             subjects,
             yearsofExperience,
             experience: experience || [],
-            description, 
+            description,
             teachupto,
             qualification,
             mode: mode || 'Offline',
-            feesPerHour, 
-            number, 
-            country, 
+            feesPerHour,
+            number,
+            country,
             city,
             town,
-            area: area || '' 
+            area: area || ''
         })
 
         const token = jwt.sign({ _id: teachers._id }, process.env.JWT_SECRET)
 
-        return res.status(201).json({ 
-            success: true, 
-            message: "Signup Successful", 
-            token, 
-            teachers 
+        return res.status(201).json({
+            success: true,
+            message: "Signup Successful",
+            token,
+            teachers
         })
 
     } catch (error) {
         console.error('Signup error:', error)
-        return res.status(500).json({ 
-            success: false, 
-            message: "Internal server error" 
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
         })
     }
 }
@@ -106,13 +106,13 @@ const login = async (req, res) => {
             })
         }
         const token = jwt.sign({ _id: teacher._id }, process.env.JWT_SECRET)
-       
+
         return res.json({
             success: true,
             message: "login Successfull",
             token,
             teacher
-            
+
         })
     } catch (error) {
         return res.json({ success: false, message: error.message })
@@ -122,10 +122,10 @@ const login = async (req, res) => {
 
 const getteacherinfo = async (req, res) => {
     try {
-        const {country}=req.body
-        const teacher = await Teacher.find({country})
+        const { country } = req.body
+        const teacher = await Teacher.find({ country })
 
-        if (teacher.length==0) {
+        if (teacher.length == 0) {
             return res.json({
                 success: false,
                 message: "No teacher found"
@@ -146,7 +146,7 @@ const getAllteacher = async (req, res) => {
     try {
         const teacher = await Teacher.find({})
 
-        if (teacher.length==0) {
+        if (teacher.length == 0) {
             return res.json({
                 success: false,
                 message: "No teacher found"
@@ -165,11 +165,11 @@ const getAllteacher = async (req, res) => {
 
 const updateindo = async (req, res) => {
     try {
-        const { token, name, gender,subjects,yearsofExperience,experience,description, teachupto,qualification,mode,feesPerHour, number, country, city,town,area  } = req.body
+        const { token, name, gender, subjects, yearsofExperience, experience, description, teachupto, qualification, mode, feesPerHour, number, country, city, town, area } = req.body
 
         const image = req.file
 
-        if ( !token||!name || !gender||!subjects||!yearsofExperience ||experience|| !description || !qualification||!teachupto ||!feesPerHour|| !number || !country || !city||!town||!area) {
+        if (!token || !name || !gender || !subjects || !yearsofExperience || experience || !description || !qualification || !teachupto || !feesPerHour || !number || !country || !city || !town || !area) {
             return res.json({
                 success: false,
                 message: "Something is missing"
@@ -178,7 +178,7 @@ const updateindo = async (req, res) => {
 
         const teacher = jwt.verify(token, process.env.JWT_SECRET)
 
-        await Teacher.findByIdAndUpdate(teacher._id, { name, gender,subjects,yearsofExperience,experience,description, teachupto,qualification,mode,feesPerHour, number, country, city,town,area  })
+        await Teacher.findByIdAndUpdate(teacher._id, { name, gender, subjects, yearsofExperience, experience, description, teachupto, qualification, mode, feesPerHour, number, country, city, town, area })
         if (image) {
             const imagefile = await cloudinary.uploader.upload(image.path)
             await Teacher.findByIdAndUpdate(teacher._id, { image: imagefile.secure_url })
@@ -214,51 +214,51 @@ const getoneTeacherInfo = async (req, res) => {
 
 
 
-const changepass=async(req,res)=>{
-    try{
-        const {password,newpass,id}=req.body
-        if(!password ||!newpass ||!id){
-            return res.json({success:false,message:"somefield is missing"})
+const changepass = async (req, res) => {
+    try {
+        const { password, newpass, id } = req.body
+        if (!password || !newpass || !id) {
+            return res.json({ success: false, message: "somefield is missing" })
         }
 
 
-        const teacher=await Teacher.findById(id)
+        const teacher = await Teacher.findById(id)
 
-        if(!teacher){
-            return res.json({success:false,message:"studnet not found"})
+        if (!teacher) {
+            return res.json({ success: false, message: "studnet not found" })
         }
 
-        const match=await bcrypt.compare(password,teacher.password)
-        if(!match){
-            return res.json({success:false,message:"Passowrd is wrong"})
+        const match = await bcrypt.compare(password, teacher.password)
+        if (!match) {
+            return res.json({ success: false, message: "Passowrd is wrong" })
         }
-    const hash=await bcrypt.hash(newpass,10);
-        await Teacher.findByIdAndUpdate(id,{password:hash})
+        const hash = await bcrypt.hash(newpass, 10);
+        await Teacher.findByIdAndUpdate(id, { password: hash })
 
-        return res.json({success:true,message:"Update Successfull"})
-        
-    }catch(error){
-        return res.json({success:false,message:error.message})
+        return res.json({ success: true, message: "Update Successfull" })
+
+    } catch (error) {
+        return res.json({ success: false, message: error.message })
     }
 }
 
 
-const getmydetail=async(req,res)=>{
-    try{
-        const userid=req.userid
+const getmydetail = async (req, res) => {
+    try {
+        const userid = req.userid
 
-        const teacher=await Teacher.findById(userid)
-        if(!teacher){
-            return res.json({success:false,message:"no studnet found"})
+        const teacher = await Teacher.findById(userid)
+        if (!teacher) {
+            return res.json({ success: false, message: "no studnet found" })
         }
 
         return res.json({
-            success:true , teacher
+            success: true, teacher
         })
-    }catch(error){
-        return res.json({success:false,message:error.message})
+    } catch (error) {
+        return res.json({ success: false, message: error.message })
     }
 }
 
 
-export { signup, login, getteacherinfo, updateindo, getoneTeacherInfo ,getAllteacher,changepass,getmydetail}
+export { signup, login, getteacherinfo, updateindo, getoneTeacherInfo, getAllteacher, changepass, getmydetail }

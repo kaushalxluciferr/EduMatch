@@ -261,4 +261,36 @@ const getmydetail = async (req, res) => {
 }
 
 
-export { signup, login, getteacherinfo, updateindo, getoneTeacherInfo, getAllteacher, changepass, getmydetail }
+// In your backend routes
+const updateTeacherRating = async (req, res) => {
+    try {
+        const { teacherId, rating, totalReview } = req.body;
+
+        const teacher = await Teacher.findByIdAndUpdate(
+            teacherId,
+            { 
+                rating: rating,
+                totalReview: totalReview
+            },
+            { new: true }
+        );
+
+        if (!teacher) {
+            return res.status(404).json({ success: false, message: "Teacher not found" });
+        }
+
+        return res.json({ 
+            success: true, 
+            message: "Rating updated successfully",
+            teacher: teacher
+        });
+
+    } catch (error) {
+        return res.status(500).json({ 
+            success: false, 
+            message: "Server error: " + error.message 
+        });
+    }
+}
+
+export { signup, login, getteacherinfo, updateindo, getoneTeacherInfo, getAllteacher, changepass, getmydetail,updateTeacherRating }

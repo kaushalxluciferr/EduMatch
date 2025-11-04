@@ -6,22 +6,41 @@ import jwt from 'jsonwebtoken'
 
 const signup = async (req, res) => {
     try {
-        const { name, email, password, gender,subjects,yearsofExperience,experience,description, teachupto,qualification,mode,feesPerHour, number, country, city,town,area } = req.body
+        const { 
+            name, email, password, gender, subjects, yearsofExperience, 
+            experience, description, teachupto, qualification, mode, 
+            feesPerHour, number, country, city, town, area 
+        } = req.body
 
         const image = req.file
 
-        if (!image || !name || !email || !gender||!subjects||!password||!yearsofExperience ||!experience|| !description || !qualification||!teachupto ||!feesPerHour|| !number || !country || !city||!town||!area) {
-            return res.json({
+        if (!image || !name || !email || !gender || !password || 
+            !yearsofExperience || !description || !teachupto || 
+            !qualification || !feesPerHour || !number || !country || 
+            !city || !town) {
+            return res.status(400).json({
                 success: false,
-                message: "Something is missing"
+                message: "Please fill all required fields"
+            })
+        }
+        if (!subjects || !Array.isArray(subjects) || subjects.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Please add at least one subject"
+            })
+        }
+        if (!experience || !Array.isArray(experience)) {
+            return res.status(400).json({
+                success: false,
+                message: "Experience must be an array"
             })
         }
 
         const exemail = await Teacher.findOne({ email })
         if (exemail) {
-            return res.json({
+            return res.status(409).json({
                 success: false,
-                message: "email Exists"
+                message: "Email already exists"
             })
         }
 
@@ -29,20 +48,43 @@ const signup = async (req, res) => {
         const hashpass = await bcrypt.hash(password, 10)
 
         const teachers = await Teacher.create({
-            name, email, password: hashpass, image: imageupoad.secure_url, gender,subjects,yearsofExperience,experience,description, teachupto,qualification,mode,feesPerHour, number, country, city,town,area
+            name, 
+            email, 
+            password: hashpass, 
+            image: imageupoad.secure_url, 
+            gender,
+            subjects,
+            yearsofExperience,
+            experience: experience || [],
+            description, 
+            teachupto,
+            qualification,
+            mode: mode || 'Offline',
+            feesPerHour, 
+            number, 
+            country, 
+            city,
+            town,
+            area: area || '' 
         })
-
-        await teachers.save()
 
         const token = jwt.sign({ _id: teachers._id }, process.env.JWT_SECRET)
 
-        return res.json({ success: true, message: "Signup Successfull", token,teachers })
+        return res.status(201).json({ 
+            success: true, 
+            message: "Signup Successful", 
+            token, 
+            teachers 
+        })
 
     } catch (error) {
-        return res.json({ success: false, message: error.message })
+        console.error('Signup error:', error)
+        return res.status(500).json({ 
+            success: false, 
+            message: "Internal server error" 
+        })
     }
 }
-
 
 const login = async (req, res) => {
     try {

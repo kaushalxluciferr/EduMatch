@@ -1,6 +1,6 @@
 import express from "express"
 import upload from "../config/multer.js"
-import { changepass, getallstudnets, getonestudnet, getstudnets, login, signup, updateinfo } from "../controller/studnetcontroller.js"
+import { changepass, getallstudnets, getmydetail, getonestudnet, getstudnets, login, signup, updateinfo } from "../controller/studnetcontroller.js"
 import teacherAuth from "../middleware/teacherauth.js"
 import studentAuth from "../middleware/studentauth.js"
 const studentRouter = express.Router()
@@ -13,7 +13,7 @@ studentRouter.post('/getinfo', teacherAuth, getallstudnets)  //for teacher to ac
 studentRouter.post('/getoneinfo', teacherAuth, getonestudnet)  // for teacher to access one studnets data
 studentRouter.post('/getAllstudent',teacherAuth,getstudnets)
 studentRouter.post('/changepass',studentAuth,changepass)
-
+studentRouter.post('/getmydetail',studentAuth,getmydetail)
 
 
 export default studentRouter

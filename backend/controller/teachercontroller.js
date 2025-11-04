@@ -10,7 +10,7 @@ const signup = async (req, res) => {
 
         const image = req.file
 
-        if (!image || !name || !email || !gender||!subjects||!password||!yearsofExperience ||experience|| !description || !qualification||!teachupto ||!feesPerHour|| !number || !country || !city||!town||!area) {
+        if (!image || !name || !email || !gender||!subjects||!password||!yearsofExperience ||!experience|| !description || !qualification||!teachupto ||!feesPerHour|| !number || !country || !city||!town||!area) {
             return res.json({
                 success: false,
                 message: "Something is missing"
@@ -201,6 +201,22 @@ const changepass=async(req,res)=>{
 }
 
 
+const getmydetail=async(req,res)=>{
+    try{
+        const userid=req.userid
+
+        const teacher=await Teacher.findById(userid)
+        if(!teacher){
+            return res.json({success:false,message:"no studnet found"})
+        }
+
+        return res.json({
+            success:true , teacher
+        })
+    }catch(error){
+        return res.json({success:false,message:error.message})
+    }
+}
 
 
-export { signup, login, getteacherinfo, updateindo, getoneTeacherInfo ,getAllteacher,changepass}
+export { signup, login, getteacherinfo, updateindo, getoneTeacherInfo ,getAllteacher,changepass,getmydetail}

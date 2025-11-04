@@ -13,7 +13,7 @@ const teacherAuth = async (req, res, next) => {
                 message: " Token not matched . try again "
             })
         }
-        req.userid = token._id
+        req.userid = ismatch._id
         next()
 
     } catch (error) {

@@ -243,4 +243,20 @@ const changepass=async(req,res)=>{
         return res.json({success:false,message:error.message})
     }
 }
-export { signup, login, getallstudnets, updateinfo, getonestudnet ,getstudnets,changepass}
+
+
+
+const getmydetail=async(req,res)=>{
+    try{
+        const userid=req.userid
+        const student=await Student.findById(userid)
+        if(!student){
+            return res.json({success:false,message:"no student found"})
+        }
+
+        return res.json({success:true,message:"Studnet found",student})
+    }catch(error){
+        return res.json({success:false,message:error.message})
+    }
+}
+export { signup, login, getallstudnets, updateinfo, getonestudnet ,getstudnets,changepass,getmydetail}

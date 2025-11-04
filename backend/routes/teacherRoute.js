@@ -13,6 +13,6 @@ teacherRouter.post('/updateinfo', upload.single('image'), teacherAuth, updateind
 teacherRouter.post('/getallteacher',studentAuth,getAllteacher)
 teacherRouter.post('/changepass',teacherAuth,changepass)
 teacherRouter.post('/getmydetail',teacherAuth,getmydetail)
-teacherRouter.post('getoneTeacherInfo',studentAuth,getoneTeacherInfo)
+teacherRouter.post('/getoneTeacherInfo',studentAuth,getoneTeacherInfo)
 
 export default teacherRouter

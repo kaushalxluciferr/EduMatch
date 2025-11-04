@@ -169,7 +169,7 @@ const updateindo = async (req, res) => {
 
         const image = req.file
 
-        if (!token || !name || !gender || !subjects || !yearsofExperience || experience || !description || !qualification || !teachupto || !feesPerHour || !number || !country || !city || !town || !area) {
+        if (!token || !name || !gender || !subjects || !yearsofExperience || !experience || !description || !qualification || !teachupto || !feesPerHour || !number || !country || !city || !town || !area) {
             return res.json({
                 success: false,
                 message: "Something is missing"
